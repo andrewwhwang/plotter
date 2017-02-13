@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import argparse
 import stepper, dc
+import crosshatch
 import RPi.GPIO as GPIO
 from multiprocessing import Process
 from time import sleep
@@ -13,17 +14,36 @@ args = parser.parse_args()
 
 DIM = 400
 SPEED = .005
+SPACING = 10
 
 def getContour(level, image):
-    imgray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(imgray,(5,5),0)
-    if args.type == 'contours':
-        thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-    else:
-        ret, thresh = cv2.threshold(blur,level,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    return [x for x in contours if cv2.contourArea(x) >= 100]
+    thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    return [x for x in c if cv2.contourArea(x) >= 100]
     
+def getContourCrossHatch(image):
+    funcs = [crosshatch.drawDiagonalDown,crosshatch.drawDiagonalUp,crosshatch.drawUp,crosshatch.drawRight]
+    contours = []
+    for i in range(4):
+        level = (i + 1) * 51
+        # ret, thresh = cv2.threshold(blur,level,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        ret, thresh = cv2.threshold(blur,level,255,0)
+        im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        c = [x for x in c if cv2.contourArea(x) >= 100]
+        
+        image = np.zeros((DIM,DIM,3))
+        cv2.drawContours(image, c, -1, (0,255,0), -1)
+        lines, endpoints = funcs[i](DIM, SPACING)
+        image = cv2.bitwise_and(image, lines)
+            
+        if i < 2:
+            contours += crosshatch.getVectorsDiag(endpoints, image)
+        else:
+            contours += crosshatch.getVectorsOrth(endpoints, image)
+            
+    return contours
+        
+
 def CNCprint(c):
     ver_motor = stepper.motor(7,11)
     hor_motor = stepper.motor(24,26)
@@ -74,8 +94,13 @@ if __name__ == '__main__':
     im = cv2.imread(args.file, 1)
     scale = float(DIM)/max(im.shape[0], im.shape[1])
     resize = cv2.resize(im, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-    # c = getContour(127, cv2.bitwise_not(resize))
-    c = getContour(127, resize)
+    imgray = cv2.cvtColor(resize,cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(imgray,(5,5),0)
+    contours = []
+    if args.type == 'contours':
+        contours = getContour(127, cv2.bitwise_not(blur))
+    else:
+        contours = getContourCrossHatch(blur)
     
     # try:
         # CNCprint(c)
@@ -84,5 +109,5 @@ if __name__ == '__main__':
     # GPIO.cleanup()
     
     black_background = np.zeros((DIM,DIM,3))
-    final = cv2.drawContours(black_background, c, -1, (0,255,0), 1)
+    final = cv2.drawContours(black_background, contours, -1, (0,255,0), 1)
     cv2.imwrite('final.jpg', final)

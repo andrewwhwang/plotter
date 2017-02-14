@@ -18,10 +18,6 @@ def drawDiagonalDown(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
     for i in range((dim * -1) + spacing,dim,spacing):
-        # x_start = min(dim - i,dim)
-        # y_start = min(dim, dim + i)
-        # x_end = max(0, -1 * i)
-        # y_end = max(0, i)
         x_start = max(0, -1 * i)
         y_start = max(0, i)
         x_end = min(dim - i,dim)

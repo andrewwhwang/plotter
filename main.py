@@ -105,11 +105,11 @@ if __name__ == '__main__':
     else:
         contours = getContourCrossHatch(blur)
     
-    # try:
-        # CNCprint(contours)
-    # except KeyboardInterrupt:
-        # GPIO.cleanup()
-    # GPIO.cleanup()
+    try:
+        CNCprint(contours)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+    GPIO.cleanup()
     
     black_background = np.zeros((DIM,DIM,3))
     final = cv2.drawContours(black_background, contours, -1, (0,255,0), 1)

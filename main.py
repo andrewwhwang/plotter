@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 DIM = 400
 SPEED = .005
-SPACING = 10
+SPACING = 20
 
 def getContour(level, image):
     thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
@@ -105,11 +105,11 @@ if __name__ == '__main__':
     else:
         contours = getContourCrossHatch(blur)
     
-    try:
-        CNCprint(contours)
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-    GPIO.cleanup()
+    # try:
+        # CNCprint(contours)
+    # except KeyboardInterrupt:
+        # GPIO.cleanup()
+    # GPIO.cleanup()
     
     black_background = np.zeros((DIM,DIM,3))
     final = cv2.drawContours(black_background, contours, -1, (0,255,0), 1)

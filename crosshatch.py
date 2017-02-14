@@ -17,7 +17,7 @@ def drawDiagonalUp(dim, spacing):
 def drawDiagonalDown(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
-    for i in range((dim * -1) + spacing,dim,spacing):
+    for i in range(dim - 1,(dim * -1) + spacing,-1*spacing):
         x_start = max(0, -1 * i)
         y_start = max(0, i)
         x_end = min(dim - i,dim)
@@ -41,7 +41,7 @@ def drawUp(dim, spacing):
 def drawRight(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
-    for i in range(spacing,dim,spacing):
+    for i in range(dim - 1,spacing,-1*spacing):
         x_start = 0
         y_start = i
         x_end = dim

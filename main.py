@@ -55,7 +55,7 @@ def CNCprint(c):
     ver_motor.reset()
     
 
-    for a, contour in enumerate(c):
+    for contour in c:
         
         hor_motor.goto(contour[0][0][0],SPEED)
         ver_motor.goto(contour[0][0][1],SPEED)
@@ -84,12 +84,6 @@ def CNCprint(c):
         hor_motor.set_pos(contour[-1][0][0])
         ver_motor.set_pos(contour[-1][0][1])
         
-        if a % 3 == 3:
-            hor_motor.reset()
-            ver_motor.reset()
-            hor_motor.set_pos(0)
-            ver_motor.set_pos(0)
-        
     
 if __name__ == '__main__':
     im = cv2.imread(args.file, 1)
@@ -103,11 +97,11 @@ if __name__ == '__main__':
     else:
         contours = getContourCrossHatch(blur)
     
-    # try:
-        # CNCprint(c)
-    # except KeyboardInterrupt:
-        # GPIO.cleanup()
-    # GPIO.cleanup()
+    try:
+        CNCprint(c)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+    GPIO.cleanup()
     
     black_background = np.zeros((DIM,DIM,3))
     final = cv2.drawContours(black_background, contours, -1, (0,255,0), 1)

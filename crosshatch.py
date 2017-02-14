@@ -5,14 +5,10 @@ def drawDiagonalUp(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
     for i in range(spacing,dim * 2,spacing):
-        x_start = min(i,dim -1)
-        y_start = max(0, i - dim)
-        x_end = max(0, i - dim)
-        y_end = min(i,dim -1)
-        # x_start = max(0, i - dim)
-        # y_start = min(i,dim -1)
-        # x_end = min(i,dim -1)
-        # y_end = max(0, i - dim)
+        x_start = max(0, i - dim)
+        y_start = min(i,dim -1)
+        x_end = min(i,dim -1)
+        y_end = max(0, i - dim)
         cv2.line(image,(x_start, y_start),(x_end, y_end),(0,255,0))
         l.append((x_start, y_start, x_end, y_end))
     return image, l
@@ -22,6 +18,10 @@ def drawDiagonalDown(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
     for i in range((dim * -1) + spacing,dim,spacing):
+        # x_start = min(dim - i,dim)
+        # y_start = min(dim, dim + i)
+        # x_end = max(0, -1 * i)
+        # y_end = max(0, i)
         x_start = max(0, -1 * i)
         y_start = max(0, i)
         x_end = min(dim - i,dim)
@@ -59,12 +59,12 @@ def getVectorsDiag(vectors, im):
     for v in vectors:
         state = False
         current = []
-        for x in range(v[0],v[2]):
+        for x in reversed(range(v[0],v[2])):
             y = v[2]+v[0]-x if v[3] - v[1] < 0 else x + (v[1] - v[0])
             if any(im[x][y]):
                 current.append([[y,x]])
                 state = True
-            if (x == v[2]-1 or not any(im[x][y])) and state == True:
+            if (x == v[0] or not any(im[x][y])) and state == True:
                 masked_list.append(np.array(current, dtype=np.int32))
                 current = []
                 state = False

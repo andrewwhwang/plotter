@@ -18,6 +18,7 @@ SPACING = 10
 
 def getContour(level, image):
     thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    # ret, thresh = cv2.threshold(blur,level,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     return [x for x in c if cv2.contourArea(x) >= 100]
     
@@ -98,7 +99,7 @@ if __name__ == '__main__':
     blur = cv2.GaussianBlur(imgray,(5,5),0)
     contours = []
     if args.type == 'contours':
-        contours = getContour(127, cv2.bitwise_not(blur))
+        contours = getContour(127, blur)
     else:
         contours = getContourCrossHatch(blur)
     

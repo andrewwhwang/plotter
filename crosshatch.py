@@ -75,7 +75,7 @@ def getVectorsOrth(vectors, im):
     for v in vectors:
         state = False
         current = []
-        for i in range(max(v)):
+        for i in reversed(range(max(v))):
             x = i
             y = i
             if v[0] == 0:

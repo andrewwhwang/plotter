@@ -45,7 +45,7 @@ def getContourCrossHatch(image):
     return contours
         
 
-def CNCprint(c):
+def CNCprint(contours):
     ver_motor = stepper.motor(7,11)
     hor_motor = stepper.motor(24,26)
     dc_motor = dc.DCmotor(13,15)
@@ -55,7 +55,7 @@ def CNCprint(c):
     ver_motor.reset()
     
 
-    for contour in c:
+    for contour in contours:
         
         hor_motor.goto(contour[0][0][0],SPEED)
         ver_motor.goto(contour[0][0][1],SPEED)

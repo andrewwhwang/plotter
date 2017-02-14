@@ -59,10 +59,10 @@ def getVectorsDiag(vectors, im):
             y = v[2]+v[0]-x if v[3] - v[1] < 0 else x + (v[1] - v[0])
             
             if any(im[x][y]):
-                current += [[y,x]]
+                current.append([[y,x]])
                 state = True
             if (x == v[2]-1 or not any(im[x][y])) and state == True:
-                masked_list.append(np.array([current], dtype=np.int32))
+                masked_list.append(np.array(current, dtype=np.int32))
                 current = []
                 state = False
     return masked_list
@@ -80,10 +80,10 @@ def getVectorsOrth(vectors, im):
             else: 
                 y = v[0]
             if any(im[x][y]):
-                current += [[y,x]]
+                current.append([[y,x]])
                 state = True
             if (i == max(v)-1 or not any(im[x][y])) and state == True:
-                masked_list.append(np.array([current], dtype=np.int32))
+                masked_list.append(np.array(current, dtype=np.int32))
                 current = []
                 state = False
     return masked_list

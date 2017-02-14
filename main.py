@@ -57,8 +57,16 @@ def CNCprint(contours):
 
     for contour in contours:
         
-        hor_motor.goto(contour[0][0][0],SPEED)
-        ver_motor.goto(contour[0][0][1],SPEED)
+        pX = Process(target=hor_motor.goto, args=(contour[0][0][0],SPEED))
+        pY = Process(target=ver_motor.goto, args=(contour[0][0][0],SPEED))
+        pX.start()
+        pY.start()
+        pX.join()
+        pY.join()
+        
+        
+        hor_motor.set_pos(contour[0][0][0],SPEED)
+        ver_motor.set_pos(contour[0][0][1],SPEED)
         
         
         x_dis = [j[0][0]-i[0][0] for i, j in zip(contour[:-1], contour[1:])]

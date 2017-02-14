@@ -98,7 +98,7 @@ if __name__ == '__main__':
         contours = getContourCrossHatch(blur)
     
     try:
-        CNCprint(c)
+        CNCprint(contours)
     except KeyboardInterrupt:
         GPIO.cleanup()
     GPIO.cleanup()

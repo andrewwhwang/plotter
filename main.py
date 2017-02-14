@@ -23,7 +23,7 @@ def getContour(level, image):
     return [x for x in c if cv2.contourArea(x) >= 100]
     
 def getContourCrossHatch(image):
-    funcs = [crosshatch.drawDiagonalDown,crosshatch.drawDiagonalUp,crosshatch.drawUp,crosshatch.drawRight]
+    funcs = [crosshatch.drawDiagonalDown,crosshatch.drawDiagonalUp,crosshatch.drawUp,crosshatch.drawLeft]
     contours = []
     for i in range(4):
         level = (i + 1) * 51

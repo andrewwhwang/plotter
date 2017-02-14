@@ -38,7 +38,7 @@ def drawUp(dim, spacing):
         l.append((x_start, y_start, x_end, y_end))
     return image, l
     
-def drawRight(dim, spacing):
+def drawLeft(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
     for i in reversed(range(spacing,dim,spacing)):

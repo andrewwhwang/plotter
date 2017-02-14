@@ -55,19 +55,29 @@ def getVectorsDiag(vectors, im):
     for v in vectors:
         state = False
         current = []
-        prev = [[0,0]]
+        # prev = [[0,0]]
         for x in range(v[0],v[2]):
             y = v[2]+v[0]-x if v[3] - v[1] < 0 else x + (v[1] - v[0])
-            if any(im[y][x]) != state:
-                if state == False:
-                    current = [[x,y]]
-                else:
-                    masked_list.append(np.array([current,prev], dtype=np.int32))
-                state = not(state)
-            #if last iteration and still True
-            if x == v[2]-1 and state == True:
-                masked_list.append(np.array([current,prev], dtype=np.int32))
-            prev = [[x,y]]
+            
+            if any(im[x][y]):
+                current += [[y,x]]
+                state = True
+            if (x == v[2]-1 or not any(im[x][y])) and state == True:
+                masked_list.append(np.array([current], dtype=np.int32))
+                current = []
+                state = False
+            
+            
+            # if any(im[y][x]) != state:
+                # if state == False:
+                    # current = [[x,y]]
+                # else:
+                    # masked_list.append(np.array([current,prev], dtype=np.int32))
+                # state = not(state)
+            # if x == v[2]-1 and state == True:
+                # masked_list.append(np.array([current,prev], dtype=np.int32))
+            # prev = [[x,y]]
+            
     return masked_list
 
 def getVectorsOrth(vectors, im):
@@ -75,7 +85,6 @@ def getVectorsOrth(vectors, im):
     for v in vectors:
         state = False
         current = []
-        prev = [[0,0]]
         for i in range(max(v)):
             x = i
             y = i
@@ -83,14 +92,12 @@ def getVectorsOrth(vectors, im):
                 x = v[1]
             else: 
                 y = v[0]
-            if any(im[x][y]) != state:
-                if state == False:
-                    current = [[y,x]]
-                else:
-                    masked_list.append(np.array([current,prev], dtype=np.int32))
-                state = not(state)
-            if i == max(v)-1 and state == True:
-                masked_list.append(np.array([current,prev], dtype=np.int32))
-            prev = [[y,x]]
+            if any(im[x][y]):
+                current += [[y,x]]
+                state = True
+            if (i == max(v)-1 or not any(im[x][y])) and state == True:
+                masked_list.append(np.array([current], dtype=np.int32))
+                current = []
+                state = False
     return masked_list
    

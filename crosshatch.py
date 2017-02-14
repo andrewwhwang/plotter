@@ -5,10 +5,14 @@ def drawDiagonalUp(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
     for i in range(spacing,dim * 2,spacing):
-        x_start = max(0, i - dim)
-        y_start = min(i,dim -1)
-        x_end = min(i,dim -1)
-        y_end = max(0, i - dim)
+        x_start = min(i,dim -1)
+        y_start = max(0, i - dim)
+        x_end = max(0, i - dim)
+        y_end = min(i,dim -1)
+        # x_start = max(0, i - dim)
+        # y_start = min(i,dim -1)
+        # x_end = min(i,dim -1)
+        # y_end = max(0, i - dim)
         cv2.line(image,(x_start, y_start),(x_end, y_end),(0,255,0))
         l.append((x_start, y_start, x_end, y_end))
     return image, l
@@ -17,7 +21,7 @@ def drawDiagonalUp(dim, spacing):
 def drawDiagonalDown(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
-    for i in reversed(range((dim * -1) + spacing,dim,spacing)):
+    for i in range((dim * -1) + spacing,dim,spacing):
         x_start = max(0, -1 * i)
         y_start = max(0, i)
         x_end = min(dim - i,dim)
@@ -41,7 +45,7 @@ def drawUp(dim, spacing):
 def drawLeft(dim, spacing):
     image = np.zeros((dim,dim,3))
     l = []
-    for i in reversed(range(spacing,dim,spacing)):
+    for i in range(spacing,dim,spacing):
         x_start = 0
         y_start = i
         x_end = dim
@@ -57,7 +61,6 @@ def getVectorsDiag(vectors, im):
         current = []
         for x in range(v[0],v[2]):
             y = v[2]+v[0]-x if v[3] - v[1] < 0 else x + (v[1] - v[0])
-            # print(x,y,im[x][y])
             if any(im[x][y]):
                 current.append([[y,x]])
                 state = True

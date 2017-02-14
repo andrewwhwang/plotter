@@ -55,7 +55,8 @@ def getVectorsDiag(vectors, im):
     for v in vectors:
         state = False
         current = []
-        for x in reversed(range(v[0],v[2])):
+        # for x in reversed(range(v[0],v[2])):
+        for x in range(v[0],v[2]):
             y = v[2]+v[0]-x if v[3] - v[1] < 0 else x + (v[1] - v[0])
             if any(im[x][y]):
                 current.append([[y,x]])
@@ -71,7 +72,8 @@ def getVectorsOrth(vectors, im):
     for v in vectors:
         state = False
         current = []
-        for i in reversed(range(max(v))):
+        # for i in reversed(range(max(v))):
+        for i in range(max(v)):
             x = i
             y = i
             if v[0] == 0:

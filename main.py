@@ -14,22 +14,23 @@ args = parser.parse_args()
 
 DIM = 400
 SPEED = .005
-SPACING = 20
+SPACING = 10
 
 def getContour(level, image):
     thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     # ret, thresh = cv2.threshold(blur,level,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    return [x for x in c if cv2.contourArea(x) >= 100]
+    im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+    c =  [x for x in c if cv2.contourArea(x) >= 100]
+    return [c]
     
 def getContourCrossHatch(image):
-    funcs = [crosshatch.drawUp,crosshatch.drawDiagonalUp,crosshatch.drawLeft,crosshatch.drawDiagonalDown,]
+    funcs = [crosshatch.drawDiagonalDown,crosshatch.drawDiagonalUp,crosshatch.drawUp,crosshatch.drawLeft]
     contours = []
     for i in range(4):
         level = (i + 1) * 51
         # ret, thresh = cv2.threshold(blur,level,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
         ret, thresh = cv2.threshold(blur,level,255,0)
-        im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        im2, c, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
         c = [x for x in c if cv2.contourArea(x) >= 100]
         
         image = np.zeros((DIM,DIM,3))
@@ -38,9 +39,9 @@ def getContourCrossHatch(image):
         image = cv2.bitwise_and(image, lines)
             
         if i < 2:
-            contours += crosshatch.getVectorsDiag(endpoints, image)
+            contours.append(crosshatch.getVectorsDiag(endpoints, image))
         else:
-            contours += crosshatch.getVectorsOrth(endpoints, image)
+            contours.append(crosshatch.getVectorsOrth(endpoints, image))
             
     return contours
         
@@ -91,7 +92,8 @@ def CNCprint(contours):
         
         hor_motor.set_pos(contour[-1][0][0])
         ver_motor.set_pos(contour[-1][0][1])
-        
+    
+    GPIO.cleanup()
     
 if __name__ == '__main__':
     im = cv2.imread(args.file, 1)
@@ -106,11 +108,12 @@ if __name__ == '__main__':
         contours = getContourCrossHatch(blur)
     
     try:
-        CNCprint(contours)
+        for c in contours:
+            CNCprint(c)
     except KeyboardInterrupt:
         GPIO.cleanup()
-    GPIO.cleanup()
     
     black_background = np.zeros((DIM,DIM,3))
-    final = cv2.drawContours(black_background, contours, -1, (0,255,0), 1)
+    flatten_list = [item for sublist in contours for item in sublist]
+    final = cv2.drawContours(black_background, flatten_list, -1, (0,255,0), 1)
     cv2.imwrite('final.jpg', final)

@@ -22,7 +22,6 @@ class DCmotor():
         GPIO.output(self.wire1, 0)
         GPIO.output(self.wire2, 0)
         self.state = 'up'
-        sleep(.2)
     
     def down(self):
         GPIO.output(self.wire1, 0)
@@ -31,7 +30,6 @@ class DCmotor():
         GPIO.output(self.wire1, 0)
         GPIO.output(self.wire2, 0)
         self.state = 'down'
-        sleep(.2)
         
     def get_state(self):
         return self.state

@@ -10,7 +10,7 @@ class motor():
         GPIO.setmode(GPIO.BOARD)
 
         GPIO.setup(self.step_pin, GPIO.OUT)
-        GPIO.output(self.step_pin, 0)        
+        GPIO.output(self.step_pin, 0)
 
         GPIO.setup(self.dir_pin, GPIO.OUT)
         GPIO.output(self.dir_pin, 0)
@@ -51,4 +51,4 @@ class motor():
             sleep(.0025)
             GPIO.output(self.step_pin, 0)
             sleep(.0025)
-        sleep(.5)
+        sleep(.2)

@@ -106,9 +106,9 @@ if __name__ == '__main__':
     contours = []
     
     if args.crosshatch:
-        contours = getContour(127, blur)
-    else:
         contours = getContourCrossHatch(blur)
+    else:
+        contours = getContour(127, blur)
         
     if not args.preview:
         try:

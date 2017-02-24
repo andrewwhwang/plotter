@@ -9,7 +9,8 @@ from time import sleep
 
 parser = argparse.ArgumentParser()
 parser.add_argument('file', metavar='file', help='image file to be printed(jpg or png)')
-parser.add_argument('-t', '--type', help='contours or crosshatch', default='contours')
+parser.add_argument('-ch', '--crosshatch', help='crosshatch mode enabled', action='store_true')
+parser.add_argument('-p', '--preview', help='no print, just compute image', action='store_true')
 args = parser.parse_args()
 
 DIM = 400
@@ -103,18 +104,20 @@ if __name__ == '__main__':
     imgray = cv2.cvtColor(flip, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(imgray,(5,5),0)
     contours = []
-    if args.type == 'contours':
+    
+    if args.crosshatch:
         contours = getContour(127, blur)
     else:
         contours = getContourCrossHatch(blur)
-
-    try:
-        for c in contours:
-            CNCprint(c)
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-
-    black_background = np.zeros((DIM,DIM,3))
-    flatten_list = [item for sublist in contours for item in sublist]
-    final = cv2.drawContours(black_background, flatten_list, -1, (0,255,0), 1)
-    cv2.imwrite('final.jpg', cv2.flip(final,1))
+        
+    if not args.preview:
+        try:
+            for c in contours:
+                CNCprint(c)
+        except KeyboardInterrupt:
+            GPIO.cleanup()
+    else:
+        black_background = np.zeros((DIM,DIM,3))
+        flatten_list = [item for sublist in contours for item in sublist]
+        final = cv2.drawContours(black_background, flatten_list, -1, (0,255,0), 1)
+        cv2.imwrite('final.jpg', cv2.flip(final,1))

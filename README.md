@@ -14,5 +14,4 @@ python main.py image.png -ch
 -p makes a image preview. Doesn't physically print anything
 ```
 
-
-![Plotter in action](./plotter.png)
+[![Plotter](./plotter.png)](https://www.youtube.com/watch?v=Q-gjmmHBCXA)
